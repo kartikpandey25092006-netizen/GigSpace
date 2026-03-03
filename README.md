@@ -1,18 +1,3 @@
 # GigSpace todo
 
-~Username - string only (use regex)~
-admin powers create 
-    user del
-    user update
-    user info 
-    user create 
-    user list 
-google map api integration for live tracking 
-post and available gigs theek karna 
-constraint on gigs 
-dashboard theek karna hai 
-themes - dark and light 
-rentals update after posting 
-gigs update after posting 
-login auth - google based => google cloud console
-reminder mechanism 
+https://www.notion.so/uditdaftary/31878555b077803f8677e46bf709afca?v=31878555b0778087b9ef000c096adc6c&source=copy_link
