@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  firstName         String
+  lastName          String
+  email             String    @unique
+  phone             String
+  city              String
+  password          String
+  role              String    @default("WORKER")
+  rating            Float     @default(5.0)
+  completedGigs     Int       @default(0)
+  totalEarnings     Float     @default(0)
+  activeRentals     Int       @default(0)
+  leaderboardRank   Int       @default(0)
+  status            String    @default("ACTIVE") // ACTIVE, SUSPENDED, BLACKLISTED
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  postedGigs        Gig[]          @relation("GigOwner")
+  gigApplications   GigApplication[]
+  ownedRentals      Rental[]       @relation("RentalOwner")
+  rentalBookings    RentalBooking[]
+  sentMessages      ChatMessage[]  @relation("Sender")
+  chats             ChatParticipant[] @relation("Participant")
+}
+
+model Gig {
+  id                String    @id @default(cuid())
+  title             String
+  description       String
+  budget            Float
+  deadline          DateTime
+  category          String
+  location          String
+  priority          String    @default("MEDIUM")
+  status            String    @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED, CANCELLED
+  ownerId           String
+  owner             User      @relation("GigOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  applications      GigApplication[]
+}
+
+model GigApplication {
+  id                String    @id @default(cuid())
+  gigId             String
+  gig               Gig       @relation(fields: [gigId], references: [id], onDelete: Cascade)
+  workerId          String
+  worker            User      @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  
+  status            String    @default("PENDING") // PENDING, ACCEPTED, REJECTED, COMPLETED
+  appliedAt         DateTime  @default(now())
+  acceptedAt        DateTime?
+  completedAt       DateTime?
+  
+  @@unique([gigId, workerId])
+}
+
+model Rental {
+  id                String    @id @default(cuid())
+  title             String
+  description       String
+  category          String
+  location          String
+  pricePerHour      Float?
+  pricePerDay       Float?
+  deposit           Float
+  status            String    @default("AVAILABLE") // AVAILABLE, RENTED, MAINTENANCE
+  ownerId           String
+  owner             User      @relation("RentalOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  bookings          RentalBooking[]
+}
+
+model RentalBooking {
+  id                String    @id @default(cuid())
+  rentalId          String
+  rental            Rental    @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  startDate         DateTime
+  endDate           DateTime
+  rentalType        String    @default("daily") // hourly, daily
+  status            String    @default("PENDING") // PENDING, CONFIRMED, COMPLETED, CANCELLED
+  totalAmount       Float
+  
+  bookedAt          DateTime  @default(now())
+  confirmedAt       DateTime?
+  completedAt       DateTime?
+
+  @@unique([rentalId, userId, startDate])
+}
+
+model Chat {
+  id                String    @id @default(cuid())
+  participants      ChatParticipant[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  messages          ChatMessage[]
+}
+
+model ChatParticipant {
+  id      String @id @default(cuid())
+  chatId  String
+  chat    Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation("Participant", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, userId])
+}
+
+model ChatMessage {
+  id                String    @id @default(cuid())
+  chatId            String
+  chat              Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  senderId          String
+  sender            User      @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
+  
+  content           String
+  createdAt         DateTime  @default(now())
+}
+
+model Leaderboard {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  rank              Int
+  completedGigs     Int
+  totalEarnings     Float
+  rating            Float
+  period            String    @default("all_time") // weekly, monthly, all_time
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
