@@ -42,11 +42,11 @@ export default function RentalsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex justify-between items-center">
-          <h1 className="text-4xl font-bold text-gray-900">Browse Rentals</h1>
+          <h1 className="text-4xl font-bold text-gray-100">Browse Rentals</h1>
           <Link href="/rentals/create" className="btn-primary">
             List an Item
           </Link>
@@ -61,7 +61,7 @@ export default function RentalsPage() {
               placeholder="Search rental items..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"
+              className="w-full pl-10 pr-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"
             />
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function RentalsPage() {
         {/* Items Grid */}
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-gray-600">Loading rentals...</p>
+            <p className="text-gray-400">Loading rentals...</p>
           </div>
         ) : rentals.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -86,36 +86,36 @@ export default function RentalsPage() {
                     </div>
                   )}
 
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                  <h3 className="text-lg font-bold text-gray-100 mb-2 line-clamp-2">
                     {item.title}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-grow">
                     {item.description}
                   </p>
 
                   <div className="space-y-2 mb-4">
                     {item.pricePerHour && (
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <DollarSign size={16} className="text-green-600" />
+                      <div className="flex items-center gap-2 text-gray-300">
+                        <DollarSign size={16} className="text-green-400" />
                         <span>₹{item.pricePerHour}/hour</span>
                       </div>
                     )}
                     {item.pricePerDay && (
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <DollarSign size={16} className="text-green-600" />
+                      <div className="flex items-center gap-2 text-gray-300">
+                        <DollarSign size={16} className="text-green-400" />
                         <span>₹{item.pricePerDay}/day</span>
                       </div>
                     )}
-                    <div className="flex items-center gap-2 text-gray-700 text-sm">
+                    <div className="flex items-center gap-2 text-gray-300 text-sm">
                       <MapPin size={16} />
                       {item.location}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-800">
                     <span className={`text-xs px-2 py-1 rounded ${
                       item.available
-                        ? 'bg-green-100 text-green-700'
+                        ? 'bg-green-900/50 text-green-700'
                         : 'bg-red-100 text-red-700'
                     }`}>
                       {item.available ? 'Available' : 'Unavailable'}
@@ -131,7 +131,7 @@ export default function RentalsPage() {
         ) : (
           <div className="text-center py-12">
             <Package className="mx-auto text-gray-400 mb-4" size={48} />
-            <p className="text-gray-600 text-lg">No rental items found</p>
+            <p className="text-gray-400 text-lg">No rental items found</p>
           </div>
         )}
       </div>

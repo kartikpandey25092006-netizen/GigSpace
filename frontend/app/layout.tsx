@@ -18,7 +18,7 @@ export default function RootLayout({
         <meta name="description" content="A complete campus marketplace for gigs, rentals, and services" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className="bg-gray-50">
+      <body className="bg-gray-950 text-gray-100">
         <Header />
         <main className="min-h-screen">
           {children}

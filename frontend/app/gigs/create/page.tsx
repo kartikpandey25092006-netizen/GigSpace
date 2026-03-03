@@ -60,68 +60,68 @@ export default function CreateGigPage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Post a New Gig</h1>
+        <h1 className="text-4xl font-bold text-gray-100 mb-8">Post a New Gig</h1>
 
         <form onSubmit={handleSubmit} className="card space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Gig Title</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Gig Title</label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
               placeholder="e.g., Website Design"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Describe your gig in detail..."
               rows={5}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Budget (₹)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Budget (₹)</label>
               <input
                 type="number"
                 name="budget"
                 value={formData.budget}
                 onChange={handleChange}
                 placeholder="1000"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Deadline</label>
               <input
                 type="date"
                 name="deadline"
                 value={formData.deadline}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               >
                 <option value="OTHER">Other</option>
                 <option value="TUTORING">Tutoring</option>
@@ -133,12 +133,12 @@ export default function CreateGigPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Priority</label>
               <select
                 name="priority"
                 value={formData.priority}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               >
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
@@ -148,14 +148,14 @@ export default function CreateGigPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Location</label>
             <input
               type="text"
               name="location"
               value={formData.location}
               onChange={handleChange}
               placeholder="e.g., Campus Library"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
 

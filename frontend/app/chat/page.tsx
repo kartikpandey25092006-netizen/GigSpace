@@ -53,16 +53,16 @@ export default function ChatPage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Messages</h1>
+        <h1 className="text-4xl font-bold text-gray-100 mb-8">Messages</h1>
 
         {loading ? (
           <div className="text-center py-12">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="inline-block">
-              <MessageCircle className="text-indigo-600" size={32} />
+              <MessageCircle className="text-indigo-400" size={32} />
             </motion.div>
-            <p className="text-gray-600 mt-4">Loading chats...</p>
+            <p className="text-gray-400 mt-4">Loading chats...</p>
           </div>
         ) : chats.length > 0 ? (
           <motion.div className="space-y-3" initial="hidden" animate="visible" variants={{hidden: {opacity: 0}, visible: {opacity: 1, transition: {staggerChildren: 0.08, delayChildren: 0.2}}}}>
@@ -77,7 +77,7 @@ export default function ChatPage() {
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-gray-900">
+                    <h3 className="font-bold text-gray-100">
                       {chat.participants.find((p: any) => p.id !== user.id)?.firstName || 'Unknown'}
                     </h3>
                     {chat.unreadCount > 0 && (
@@ -86,7 +86,7 @@ export default function ChatPage() {
                       </motion.span>
                     )}
                   </div>
-                  <p className="text-gray-600 text-sm line-clamp-1">
+                  <p className="text-gray-400 text-sm line-clamp-1">
                     {chat.lastMessage || 'No messages yet'}
                   </p>
                 </div>
@@ -103,7 +103,7 @@ export default function ChatPage() {
             <motion.div animate={{y: [-2, 2, -2]}} transition={{duration: 2, repeat: Infinity}}>
               <MessageCircle className="mx-auto text-gray-400 mb-4" size={48} />
             </motion.div>
-            <p className="text-gray-600 text-lg">No chats yet</p>
+            <p className="text-gray-400 text-lg">No chats yet</p>
             <p className="text-gray-500">Start a conversation by accepting a gig or contacting an item owner</p>
           </motion.div>
         )}

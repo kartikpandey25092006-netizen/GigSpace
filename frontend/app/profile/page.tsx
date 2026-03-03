@@ -32,21 +32,21 @@ export default function ProfilePage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Profile</h1>
+          <h1 className="text-4xl font-bold text-gray-100">Profile</h1>
         </div>
 
         {/* Profile Card */}
         <div className="card mb-6">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-3xl font-bold text-gray-100">
                 {user.firstName} {user.lastName}
               </h2>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-400 mt-1">
                 {user.role === 'BUYER' && 'Buyer'}
                 {user.role === 'WORKER' && 'Worker'}
                 {user.role === 'RENTAL_OWNER' && 'Rental Owner'}
@@ -60,16 +60,16 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center gap-3 text-gray-700">
-              <Mail className="text-indigo-600" size={20} />
+            <div className="flex items-center gap-3 text-gray-300">
+              <Mail className="text-indigo-400" size={20} />
               <span>{user.email}</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
-              <Phone className="text-indigo-600" size={20} />
+            <div className="flex items-center gap-3 text-gray-300">
+              <Phone className="text-indigo-400" size={20} />
               <span>{user.phone}</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
-              <MapPin className="text-indigo-600" size={20} />
+            <div className="flex items-center gap-3 text-gray-300">
+              <MapPin className="text-indigo-400" size={20} />
               <span>{user.city}</span>
             </div>
             {user.rating && (
@@ -84,28 +84,28 @@ export default function ProfilePage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="card text-center">
-            <p className="text-3xl font-bold text-indigo-600">
+            <p className="text-3xl font-bold text-indigo-400">
               {user.completedGigs || 0}
             </p>
-            <p className="text-gray-600 text-sm">Gigs Done</p>
+            <p className="text-gray-400 text-sm">Gigs Done</p>
           </div>
           <div className="card text-center">
-            <p className="text-3xl font-bold text-green-600">
+            <p className="text-3xl font-bold text-green-400">
               ₹{user.totalEarnings || 0}
             </p>
-            <p className="text-gray-600 text-sm">Earnings</p>
+            <p className="text-gray-400 text-sm">Earnings</p>
           </div>
           <div className="card text-center">
-            <p className="text-3xl font-bold text-orange-600">
+            <p className="text-3xl font-bold text-orange-400">
               {user.activeRentals || 0}
             </p>
-            <p className="text-gray-600 text-sm">Rentals</p>
+            <p className="text-gray-400 text-sm">Rentals</p>
           </div>
           <div className="card text-center">
-            <p className="text-3xl font-bold text-yellow-600">
+            <p className="text-3xl font-bold text-yellow-400">
               #{user.leaderboardRank || 'N/A'}
             </p>
-            <p className="text-gray-600 text-sm">Rank</p>
+            <p className="text-gray-400 text-sm">Rank</p>
           </div>
         </div>
 

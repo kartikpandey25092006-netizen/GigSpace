@@ -38,17 +38,17 @@ export default function LeaderboardPage() {
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy className="text-yellow-500" size={24} />
     if (rank === 2) return <Medal className="text-gray-400" size={24} />
-    if (rank === 3) return <Medal className="text-orange-600" size={24} />
+    if (rank === 3) return <Medal className="text-orange-400" size={24} />
     return null
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Leaderboard</h1>
-          <p className="text-gray-600 mt-2">Top performers on Vubble</p>
+          <h1 className="text-4xl font-bold text-gray-100">Leaderboard</h1>
+          <p className="text-gray-400 mt-2">Top performers on Vubble</p>
         </div>
 
         {/* Period Selector */}
@@ -59,7 +59,7 @@ export default function LeaderboardPage() {
               onClick={() => setPeriod(p)}
               className={`px-4 py-2 rounded-lg font-medium transition ${period === p
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-200 text-gray-300 hover:bg-gray-300'
                 }`}
             >
               {p.charAt(0).toUpperCase() + p.slice(1)}
@@ -70,38 +70,38 @@ export default function LeaderboardPage() {
         {/* Leaderboard */}
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-gray-600">Loading leaderboard...</p>
+            <p className="text-gray-400">Loading leaderboard...</p>
           </div>
         ) : entries.length > 0 ? (
           <div className="space-y-2">
             {entries.map((entry) => (
               <div
                 key={entry.rank}
-                className="card flex items-center justify-between p-4 hover:bg-gray-50 transition"
+                className="card flex items-center justify-between p-4 hover:bg-gray-950 transition"
               >
                 <div className="flex items-center gap-4 flex-1">
                   <div className="w-8 text-center">
                     {getRankIcon(entry.rank) || (
-                      <span className="text-xl font-bold text-gray-600">
+                      <span className="text-xl font-bold text-gray-400">
                         #{entry.rank}
                       </span>
                     )}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900">
+                    <p className="font-bold text-gray-100">
                       {entry.user.firstName} {entry.user.lastName}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-400">
                       {entry.completedGigs} gigs completed
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <TrendingUp className="text-indigo-600" size={20} />
-                  <span className="text-2xl font-bold text-indigo-600">
+                  <TrendingUp className="text-indigo-400" size={20} />
+                  <span className="text-2xl font-bold text-indigo-400">
                     {entry.points}
                   </span>
-                  <span className="text-gray-600 text-sm">pts</span>
+                  <span className="text-gray-400 text-sm">pts</span>
                 </div>
               </div>
             ))}
@@ -109,7 +109,7 @@ export default function LeaderboardPage() {
         ) : (
           <div className="text-center py-12 card">
             <Trophy className="mx-auto text-gray-400 mb-4" size={48} />
-            <p className="text-gray-600 text-lg">No leaderboard data yet</p>
+            <p className="text-gray-400 text-lg">No leaderboard data yet</p>
           </div>
         )}
       </div>

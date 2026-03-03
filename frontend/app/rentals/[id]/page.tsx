@@ -84,11 +84,11 @@ export default function RentalDetailPage() {
   const isOwner = user?.id === item.owner?.id
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => router.back()}
-          className="text-indigo-600 hover:text-indigo-700 font-medium mb-6"
+          className="text-indigo-400 hover:text-indigo-300 font-medium mb-6"
         >
           ← Back to Rentals
         </button>
@@ -109,37 +109,37 @@ export default function RentalDetailPage() {
                 </div>
               )}
 
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{item.title}</h1>
+              <h1 className="text-4xl font-bold text-gray-100 mb-2">{item.title}</h1>
               
               <div className="flex gap-4 mb-4">
                 {item.pricePerHour && (
-                  <span className="text-2xl font-bold text-green-600">₹{item.pricePerHour}/hr</span>
+                  <span className="text-2xl font-bold text-green-400">₹{item.pricePerHour}/hr</span>
                 )}
                 {item.pricePerDay && (
-                  <span className="text-2xl font-bold text-green-600">₹{item.pricePerDay}/day</span>
+                  <span className="text-2xl font-bold text-green-400">₹{item.pricePerDay}/day</span>
                 )}
               </div>
 
               <span className={`inline-block px-3 py-1 rounded text-sm font-medium ${
-                item.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                item.available ? 'bg-green-900/50 text-green-700' : 'bg-red-100 text-red-700'
               }`}>
                 {item.available ? 'Available' : 'Unavailable'}
               </span>
 
-              <div className="border-t border-gray-200 mt-6 pt-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Description</h2>
-                <p className="text-gray-700 whitespace-pre-wrap">{item.description}</p>
+              <div className="border-t border-gray-800 mt-6 pt-6">
+                <h2 className="text-xl font-bold text-gray-100 mb-4">Description</h2>
+                <p className="text-gray-300 whitespace-pre-wrap">{item.description}</p>
               </div>
 
-              <div className="border-t border-gray-200 mt-6 pt-6">
-                <h3 className="font-bold text-gray-900 mb-3">Details</h3>
+              <div className="border-t border-gray-800 mt-6 pt-6">
+                <h3 className="font-bold text-gray-100 mb-3">Details</h3>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-3 text-gray-700">
-                    <MapPin size={20} className="text-indigo-600" />
+                  <div className="flex items-center gap-3 text-gray-300">
+                    <MapPin size={20} className="text-indigo-400" />
                     {item.location}
                   </div>
-                  <div className="flex items-center gap-3 text-gray-700">
-                    <DollarSign size={20} className="text-indigo-600" />
+                  <div className="flex items-center gap-3 text-gray-300">
+                    <DollarSign size={20} className="text-indigo-400" />
                     Deposit: ₹{item.deposit}
                   </div>
                   <div className="inline-block px-3 py-1 bg-gray-200 rounded text-sm">
@@ -154,15 +154,15 @@ export default function RentalDetailPage() {
           <div>
             {/* Owner Info */}
             <div className="card mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Owner</h3>
+              <h3 className="text-lg font-bold text-gray-100 mb-4">Owner</h3>
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-16 h-16 bg-indigo-600 rounded-full"></div>
                 <div>
-                  <p className="font-bold text-gray-900">
+                  <p className="font-bold text-gray-100">
                     {item.owner?.firstName} {item.owner?.lastName}
                   </p>
                   {item.owner?.rating && (
-                    <p className="text-sm text-gray-600 flex items-center gap-1">
+                    <p className="text-sm text-gray-400 flex items-center gap-1">
                       <Star size={14} className="text-yellow-400" />
                       {item.owner.rating.toFixed(1)} / 5.0
                     </p>
@@ -180,14 +180,14 @@ export default function RentalDetailPage() {
             {/* Booking Form */}
             {!isOwner && item.available && (
               <div className="card">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Book This Item</h3>
+                <h3 className="text-lg font-bold text-gray-100 mb-4">Book This Item</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Rental Type</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Rental Type</label>
                     <select
                       value={bookingData.rentalType}
                       onChange={(e) => setBookingData({ ...bookingData, rentalType: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                     >
                       {item.pricePerHour && <option value="hourly">Hourly</option>}
                       {item.pricePerDay && <option value="daily">Daily</option>}
@@ -195,22 +195,22 @@ export default function RentalDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Start Date</label>
                     <input
                       type="date"
                       value={bookingData.startDate}
                       onChange={(e) => setBookingData({ ...bookingData, startDate: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">End Date</label>
                     <input
                       type="date"
                       value={bookingData.endDate}
                       onChange={(e) => setBookingData({ ...bookingData, endDate: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      className="w-full px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                     />
                   </div>
 

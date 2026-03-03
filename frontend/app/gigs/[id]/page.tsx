@@ -69,11 +69,11 @@ export default function GigDetailPage() {
   const isCreator = user?.id === gig.creator?.id
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => router.back()}
-          className="text-indigo-600 hover:text-indigo-700 font-medium mb-6"
+          className="text-indigo-400 hover:text-indigo-300 font-medium mb-6"
         >
           ← Back to Gigs
         </button>
@@ -81,27 +81,27 @@ export default function GigDetailPage() {
         <div className="card mb-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{gig.title}</h1>
-              <span className="inline-block bg-indigo-100 text-indigo-700 px-3 py-1 rounded text-sm font-medium">
+              <h1 className="text-4xl font-bold text-gray-100 mb-2">{gig.title}</h1>
+              <span className="inline-block bg-indigo-900/50 text-indigo-300 px-3 py-1 rounded text-sm font-medium">
                 {gig.status}
               </span>
             </div>
             <div className="text-right">
-              <p className="text-4xl font-bold text-green-600">₹{gig.budget}</p>
-              <p className="text-sm text-gray-600">Budget</p>
+              <p className="text-4xl font-bold text-green-400">₹{gig.budget}</p>
+              <p className="text-sm text-gray-400">Budget</p>
             </div>
           </div>
 
           <div className="space-y-3 mb-6">
-            <div className="flex items-center gap-3 text-gray-700">
-              <MapPin size={20} className="text-indigo-600" />
+            <div className="flex items-center gap-3 text-gray-300">
+              <MapPin size={20} className="text-indigo-400" />
               {gig.location}
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
-              <Clock size={20} className="text-indigo-600" />
+            <div className="flex items-center gap-3 text-gray-300">
+              <Clock size={20} className="text-indigo-400" />
               Due: {new Date(gig.deadline).toLocaleDateString()}
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-gray-300">
               <span className="inline-block px-3 py-1 bg-gray-200 rounded text-sm">
                 {gig.category}
               </span>
@@ -111,29 +111,29 @@ export default function GigDetailPage() {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Description</h2>
-            <p className="text-gray-700 whitespace-pre-wrap">{gig.description}</p>
+          <div className="border-t border-gray-800 pt-6">
+            <h2 className="text-xl font-bold text-gray-100 mb-4">Description</h2>
+            <p className="text-gray-300 whitespace-pre-wrap">{gig.description}</p>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Creator Info */}
           <div className="card">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Posted by</h3>
+            <h3 className="text-lg font-bold text-gray-100 mb-4">Posted by</h3>
             <div className="flex items-center gap-4 mb-4">
               <div className="w-16 h-16 bg-indigo-600 rounded-full"></div>
               <div>
-                <p className="font-bold text-gray-900">
+                <p className="font-bold text-gray-100">
                   {gig.creator?.firstName} {gig.creator?.lastName}
                 </p>
                 {gig.creator?.rating && (
-                  <p className="text-sm text-gray-600 flex items-center gap-1">
+                  <p className="text-sm text-gray-400 flex items-center gap-1">
                     <Star size={14} className="text-yellow-400" />
                     {gig.creator.rating.toFixed(1)} / 5.0
                   </p>
                 )}
-                <p className="text-sm text-gray-600">{gig.creator?.completedGigs || 0} gigs</p>
+                <p className="text-sm text-gray-400">{gig.creator?.completedGigs || 0} gigs</p>
               </div>
             </div>
             {!isCreator && gig.status === 'OPEN' && (
@@ -153,25 +153,25 @@ export default function GigDetailPage() {
               </>
             )}
             {isCreator && (
-              <p className="text-center text-gray-600 text-sm">This is your gig</p>
+              <p className="text-center text-gray-400 text-sm">This is your gig</p>
             )}
           </div>
 
           {/* Quick Info */}
           <div className="card">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Info</h3>
+            <h3 className="text-lg font-bold text-gray-100 mb-4">Quick Info</h3>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-gray-600">Posted on</p>
-                <p className="font-semibold text-gray-900">{new Date(gig.createdAt).toLocaleDateString()}</p>
+                <p className="text-sm text-gray-400">Posted on</p>
+                <p className="font-semibold text-gray-100">{new Date(gig.createdAt).toLocaleDateString()}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Status</p>
-                <p className="font-semibold text-gray-900 capitalize">{gig.status}</p>
+                <p className="text-sm text-gray-400">Status</p>
+                <p className="font-semibold text-gray-100 capitalize">{gig.status}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Category</p>
-                <p className="font-semibold text-gray-900">{gig.category}</p>
+                <p className="text-sm text-gray-400">Category</p>
+                <p className="font-semibold text-gray-100">{gig.category}</p>
               </div>
             </div>
           </div>

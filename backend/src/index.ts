@@ -12,6 +12,7 @@ const prisma = new PrismaClient()
 const PORT = process.env.PORT || 3001
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID
+const NAME_REGEX = /^[a-zA-Z\s'.\-]+$/
 
 type PaymentStatus = 'created' | 'paid' | 'refunded'
 interface PaymentRecord {
@@ -75,6 +76,13 @@ const adminMiddleware = async (req: any, res: Response, next: any) => {
 app.post('/auth/register', async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, email, phone, password, city } = req.body
+
+    if (!firstName || !NAME_REGEX.test(firstName)) {
+      return res.status(400).json({ data: null, message: 'First name can only contain letters and special characters (no numbers)' })
+    }
+    if (!lastName || !NAME_REGEX.test(lastName)) {
+      return res.status(400).json({ data: null, message: 'Last name can only contain letters and special characters (no numbers)' })
+    }
 
     const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) {
@@ -204,6 +212,13 @@ app.put('/auth/profile', authMiddleware, async (req: any, res: Response) => {
   try {
     const { firstName, lastName, phone, city } = req.body
 
+    if (firstName && !NAME_REGEX.test(firstName)) {
+      return res.status(400).json({ data: null, message: 'First name can only contain letters and special characters (no numbers)' })
+    }
+    if (lastName && !NAME_REGEX.test(lastName)) {
+      return res.status(400).json({ data: null, message: 'Last name can only contain letters and special characters (no numbers)' })
+    }
+
     const user = await prisma.user.update({
       where: { id: req.user.userId },
       data: {
@@ -283,7 +298,7 @@ app.get('/admin/gigs/:id/log', authMiddleware, adminMiddleware, async (req: Requ
 app.put('/admin/gigs/:id', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { title, description, budget, deadline, category, location, priority, status } = req.body
+    const { title, description, budget, deadline, category, location, priority, status, adminMessage } = req.body
 
     const existing = await prisma.gig.findUnique({ where: { id } })
     if (!existing) {
@@ -301,6 +316,16 @@ app.put('/admin/gigs/:id', authMiddleware, adminMiddleware, async (req: Request,
         location: location ?? undefined,
         priority: priority ?? undefined,
         status: status ?? undefined,
+      },
+    })
+
+    // Notify the listing owner
+    await prisma.adminNotification.create({
+      data: {
+        userId: existing.ownerId,
+        type: 'LISTING_MODIFIED',
+        title: `Your gig "${existing.title}" was modified by admin`,
+        message: adminMessage || 'An administrator has modified your gig listing. Please review the changes.',
       },
     })
 
@@ -380,10 +405,434 @@ app.delete('/admin/gigs/:id', authMiddleware, adminMiddleware, async (req: Reque
       return res.status(404).json({ data: null, message: 'Gig not found' })
     }
 
+    // Notify the listing owner before deleting
+    await prisma.adminNotification.create({
+      data: {
+        userId: gig.ownerId,
+        type: 'LISTING_DELETED',
+        title: `Your gig "${gig.title}" was removed by admin`,
+        message: 'An administrator has removed your gig listing due to policy violations or other reasons.',
+      },
+    })
+
     await prisma.gig.delete({ where: { id } })
     res.json({ data: { deleted: true, gigId: id }, message: 'Gig deleted by admin' })
   } catch (error) {
     res.status(500).json({ data: null, message: 'Failed to delete gig' })
+  }
+})
+
+// ==================== ADMIN USER MANAGEMENT ====================
+app.get('/admin/users', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { search, status, role, limit = 50, offset = 0 } = req.query
+    const where: any = {}
+    if (status) where.status = status
+    if (role) where.role = role
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search as string } },
+        { lastName: { contains: search as string } },
+        { email: { contains: search as string } },
+      ]
+    }
+
+    const users = await prisma.user.findMany({
+      where,
+      select: {
+        id: true, firstName: true, lastName: true, email: true, phone: true,
+        city: true, role: true, status: true, rating: true, completedGigs: true,
+        totalEarnings: true, activeRentals: true, createdAt: true, updatedAt: true,
+      },
+      take: parseInt(limit as string),
+      skip: parseInt(offset as string),
+      orderBy: { createdAt: 'desc' },
+    })
+
+    const total = await prisma.user.count({ where })
+    res.json({ data: { users, total }, message: 'Users fetched' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to fetch users' })
+  }
+})
+
+app.get('/admin/users/:id', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true, firstName: true, lastName: true, email: true, phone: true,
+        city: true, role: true, status: true, rating: true, completedGigs: true,
+        totalEarnings: true, activeRentals: true, leaderboardRank: true,
+        createdAt: true, updatedAt: true,
+      },
+    })
+    if (!user) {
+      return res.status(404).json({ data: null, message: 'User not found' })
+    }
+    res.json({ data: { user }, message: 'User fetched' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to fetch user' })
+  }
+})
+
+app.put('/admin/users/:id', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { firstName, lastName, email, phone, city, role } = req.body
+
+    if (firstName && !NAME_REGEX.test(firstName)) {
+      return res.status(400).json({ data: null, message: 'First name can only contain letters and special characters (no numbers)' })
+    }
+    if (lastName && !NAME_REGEX.test(lastName)) {
+      return res.status(400).json({ data: null, message: 'Last name can only contain letters and special characters (no numbers)' })
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        firstName: firstName ?? undefined,
+        lastName: lastName ?? undefined,
+        email: email ?? undefined,
+        phone: phone ?? undefined,
+        city: city ?? undefined,
+        role: role ?? undefined,
+      },
+    })
+    res.json({ data: { user: { ...user, password: undefined } }, message: 'User updated by admin' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to update user' })
+  }
+})
+
+app.put('/admin/users/:id/password', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { newPassword } = req.body
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ data: null, message: 'Password must be at least 6 characters' })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    await prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword },
+    })
+
+    await prisma.adminNotification.create({
+      data: {
+        userId: id,
+        type: 'GENERAL',
+        title: 'Your password was reset',
+        message: 'An administrator has reset your password. Please contact support if this was unexpected.',
+      },
+    })
+
+    res.json({ data: null, message: 'Password reset successfully' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to reset password' })
+  }
+})
+
+app.put('/admin/users/:id/status', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { status } = req.body
+
+    const allowedStatuses = ['ACTIVE', 'SUSPENDED', 'BLACKLISTED']
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ data: null, message: 'Invalid status. Must be ACTIVE, SUSPENDED, or BLACKLISTED' })
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: { status },
+    })
+
+    const notifType = status === 'ACTIVE' ? 'ACCOUNT_REACTIVATED' : 'ACCOUNT_SUSPENDED'
+    const notifTitle = status === 'ACTIVE'
+      ? 'Your account has been reactivated'
+      : status === 'SUSPENDED'
+        ? 'Your account has been suspended'
+        : 'Your account has been banned'
+    const notifMsg = status === 'ACTIVE'
+      ? 'Your account is now active again. You can resume using the platform.'
+      : 'Your account has been restricted by an administrator. Contact support for more information.'
+
+    await prisma.adminNotification.create({
+      data: { userId: id, type: notifType, title: notifTitle, message: notifMsg },
+    })
+
+    res.json({ data: { user: { ...user, password: undefined } }, message: `User status updated to ${status}` })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to update user status' })
+  }
+})
+
+// ==================== ADMIN RENTAL MANAGEMENT ====================
+app.get('/admin/rentals', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { status, limit = 50, offset = 0 } = req.query
+    const where: any = {}
+    if (status) where.status = status
+
+    const rentals = await prisma.rental.findMany({
+      where,
+      include: {
+        owner: { select: { id: true, firstName: true, lastName: true, email: true } },
+        bookings: { select: { id: true, status: true } },
+      },
+      take: parseInt(limit as string),
+      skip: parseInt(offset as string),
+      orderBy: { updatedAt: 'desc' },
+    })
+
+    const total = await prisma.rental.count({ where })
+    res.json({ data: { rentals, total }, message: 'Admin rentals fetched' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to fetch rentals' })
+  }
+})
+
+app.put('/admin/rentals/:id', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { title, description, category, location, pricePerHour, pricePerDay, deposit, status, adminMessage } = req.body
+
+    const existing = await prisma.rental.findUnique({ where: { id } })
+    if (!existing) {
+      return res.status(404).json({ data: null, message: 'Rental not found' })
+    }
+
+    const rental = await prisma.rental.update({
+      where: { id },
+      data: {
+        title: title ?? undefined,
+        description: description ?? undefined,
+        category: category ?? undefined,
+        location: location ?? undefined,
+        pricePerHour: pricePerHour !== undefined ? parseFloat(String(pricePerHour)) : undefined,
+        pricePerDay: pricePerDay !== undefined ? parseFloat(String(pricePerDay)) : undefined,
+        deposit: deposit !== undefined ? parseFloat(String(deposit)) : undefined,
+        status: status ?? undefined,
+      },
+    })
+
+    await prisma.adminNotification.create({
+      data: {
+        userId: existing.ownerId,
+        type: 'LISTING_MODIFIED',
+        title: `Your rental "${existing.title}" was modified by admin`,
+        message: adminMessage || 'An administrator has modified your rental listing. Please review the changes.',
+      },
+    })
+
+    res.json({ data: { rental }, message: 'Rental updated by admin' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to update rental' })
+  }
+})
+
+app.delete('/admin/rentals/:id', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+
+    const rental = await prisma.rental.findUnique({ where: { id } })
+    if (!rental) {
+      return res.status(404).json({ data: null, message: 'Rental not found' })
+    }
+
+    await prisma.adminNotification.create({
+      data: {
+        userId: rental.ownerId,
+        type: 'LISTING_DELETED',
+        title: `Your rental "${rental.title}" was removed by admin`,
+        message: 'An administrator has removed your rental listing due to policy violations or other reasons.',
+      },
+    })
+
+    await prisma.rental.delete({ where: { id } })
+    res.json({ data: { deleted: true, rentalId: id }, message: 'Rental deleted by admin' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to delete rental' })
+  }
+})
+
+// ==================== ADMIN REPORTS ====================
+app.get('/admin/reports', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { status, type, limit = 50, offset = 0 } = req.query
+    const where: any = {}
+    if (status) where.status = status
+    if (type) where.type = type
+
+    const reports = await prisma.report.findMany({
+      where,
+      take: parseInt(limit as string),
+      skip: parseInt(offset as string),
+      orderBy: { createdAt: 'desc' },
+    })
+
+    const total = await prisma.report.count({ where })
+    res.json({ data: { reports, total }, message: 'Reports fetched' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to fetch reports' })
+  }
+})
+
+app.put('/admin/reports/:id', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { status, adminNote } = req.body
+
+    const allowedStatuses = ['OPEN', 'RESOLVED', 'DISMISSED']
+    if (status && !allowedStatuses.includes(status)) {
+      return res.status(400).json({ data: null, message: 'Invalid status' })
+    }
+
+    const report = await prisma.report.update({
+      where: { id },
+      data: {
+        status: status ?? undefined,
+        adminNote: adminNote ?? undefined,
+      },
+    })
+
+    res.json({ data: { report }, message: 'Report updated' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to update report' })
+  }
+})
+
+// ==================== ADMIN ANALYTICS ====================
+app.get('/admin/analytics', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const totalUsers = await prisma.user.count()
+    const activeUsers = await prisma.user.count({ where: { status: 'ACTIVE' } })
+    const suspendedUsers = await prisma.user.count({ where: { status: 'SUSPENDED' } })
+    const bannedUsers = await prisma.user.count({ where: { status: 'BLACKLISTED' } })
+
+    const totalGigs = await prisma.gig.count()
+    const openGigs = await prisma.gig.count({ where: { status: 'OPEN' } })
+    const inProgressGigs = await prisma.gig.count({ where: { status: 'IN_PROGRESS' } })
+    const completedGigs = await prisma.gig.count({ where: { status: 'COMPLETED' } })
+
+    const totalRentals = await prisma.rental.count()
+    const availableRentals = await prisma.rental.count({ where: { status: 'AVAILABLE' } })
+    const rentedRentals = await prisma.rental.count({ where: { status: 'RENTED' } })
+
+    const openReports = await prisma.report.count({ where: { status: 'OPEN' } })
+    const totalReports = await prisma.report.count()
+
+    const earningsAgg = await prisma.user.aggregate({ _sum: { totalEarnings: true } })
+    const totalEarnings = earningsAgg._sum.totalEarnings || 0
+
+    res.json({
+      data: {
+        users: { total: totalUsers, active: activeUsers, suspended: suspendedUsers, banned: bannedUsers },
+        gigs: { total: totalGigs, open: openGigs, inProgress: inProgressGigs, completed: completedGigs },
+        rentals: { total: totalRentals, available: availableRentals, rented: rentedRentals },
+        reports: { total: totalReports, open: openReports },
+        totalEarnings,
+      },
+      message: 'Analytics fetched',
+    })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to fetch analytics' })
+  }
+})
+
+// ==================== ADMIN NOTIFY ====================
+app.post('/admin/notify', authMiddleware, adminMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { userId, type, title, message } = req.body
+
+    if (!userId || !title || !message) {
+      return res.status(400).json({ data: null, message: 'userId, title, and message are required' })
+    }
+
+    const notification = await prisma.adminNotification.create({
+      data: { userId, type: type || 'GENERAL', title, message },
+    })
+
+    res.json({ data: { notification }, message: 'Notification sent' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to send notification' })
+  }
+})
+
+// ==================== USER NOTIFICATIONS ====================
+app.get('/notifications', authMiddleware, async (req: any, res: Response) => {
+  try {
+    const notifications = await prisma.adminNotification.findMany({
+      where: { userId: req.user.userId },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    })
+
+    const unreadCount = await prisma.adminNotification.count({
+      where: { userId: req.user.userId, read: false },
+    })
+
+    res.json({ data: { notifications, unreadCount }, message: 'Notifications fetched' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to fetch notifications' })
+  }
+})
+
+app.put('/notifications/:id/read', authMiddleware, async (req: any, res: Response) => {
+  try {
+    const { id } = req.params
+    const notification = await prisma.adminNotification.update({
+      where: { id },
+      data: { read: true },
+    })
+    res.json({ data: { notification }, message: 'Notification marked as read' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to update notification' })
+  }
+})
+
+app.put('/notifications/read-all', authMiddleware, async (req: any, res: Response) => {
+  try {
+    await prisma.adminNotification.updateMany({
+      where: { userId: req.user.userId, read: false },
+      data: { read: true },
+    })
+    res.json({ data: null, message: 'All notifications marked as read' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to mark all as read' })
+  }
+})
+
+// ==================== USER REPORT SUBMISSION ====================
+app.post('/reports/create', authMiddleware, async (req: any, res: Response) => {
+  try {
+    const { type, targetId, reason, description } = req.body
+
+    const allowedTypes = ['USER', 'GIG', 'RENTAL']
+    if (!allowedTypes.includes(type)) {
+      return res.status(400).json({ data: null, message: 'Invalid report type. Must be USER, GIG, or RENTAL' })
+    }
+    if (!targetId || !reason) {
+      return res.status(400).json({ data: null, message: 'targetId and reason are required' })
+    }
+
+    const report = await prisma.report.create({
+      data: {
+        type,
+        targetId,
+        reporterId: req.user.userId,
+        reason,
+        description: description || null,
+      },
+    })
+
+    res.json({ data: { report }, message: 'Report submitted' })
+  } catch (error) {
+    res.status(500).json({ data: null, message: 'Failed to submit report' })
   }
 })
 
@@ -822,7 +1271,7 @@ app.post('/chat/create', authMiddleware, async (req: any, res: Response) => {
           ]
         }
       },
-      include: { 
+      include: {
         participants: {
           include: { user: { select: { id: true, firstName: true, lastName: true } } }
         }
@@ -874,7 +1323,7 @@ app.get('/chat/:id/messages', async (req: Request, res: Response) => {
 
     const chat = await prisma.chat.findUnique({
       where: { id },
-      include: { 
+      include: {
         participants: {
           include: { user: { select: { id: true, firstName: true, lastName: true } } }
         }

@@ -71,41 +71,41 @@ export default function CreateRentalPage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">List a Rental Item</h1>
+        <h1 className="text-4xl font-bold text-gray-100 mb-8">List a Rental Item</h1>
 
         <form onSubmit={handleSubmit} className="card space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Item Title</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Item Title</label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
               placeholder="e.g., Laptop for Rent"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Describe the item condition, features, etc..."
               rows={5}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Upload Images</label>
-            <label className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+            <label className="block text-sm font-medium text-gray-300 mb-1">Upload Images</label>
+            <label className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:bg-gray-950">
               <div className="text-center">
                 <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                <p className="text-gray-600">Click to upload images</p>
+                <p className="text-gray-400">Click to upload images</p>
               </div>
               <input
                 type="file"
@@ -119,50 +119,50 @@ export default function CreateRentalPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price per Hour (₹)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Price per Hour (₹)</label>
               <input
                 type="number"
                 name="pricePerHour"
                 value={formData.pricePerHour}
                 onChange={handleChange}
                 placeholder="Optional"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price per Day (₹)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Price per Day (₹)</label>
               <input
                 type="number"
                 name="pricePerDay"
                 value={formData.pricePerDay}
                 onChange={handleChange}
                 placeholder="Optional"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Deposit (₹)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Deposit (₹)</label>
               <input
                 type="number"
                 name="deposit"
                 value={formData.deposit}
                 onChange={handleChange}
                 placeholder="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
               >
                 <option value="OTHER">Other</option>
                 <option value="ELECTRONICS">Electronics</option>
@@ -174,14 +174,14 @@ export default function CreateRentalPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Location</label>
             <input
               type="text"
               name="location"
               value={formData.location}
               onChange={handleChange}
               placeholder="e.g., Hostel Block A"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
 

@@ -86,6 +86,36 @@ export const apiClient = {
   assignAdminGigWorker: (id: string, workerId: string) => axiosInstance.post(`/admin/gigs/${id}/assign`, { workerId }),
   deleteAdminGig: (id: string) => axiosInstance.delete(`/admin/gigs/${id}`),
 
+  // Admin user management
+  getAdminUsers: (params?: any) => axiosInstance.get('/admin/users', { params }),
+  getAdminUserById: (id: string) => axiosInstance.get(`/admin/users/${id}`),
+  updateAdminUser: (id: string, data: any) => axiosInstance.put(`/admin/users/${id}`, data),
+  updateAdminUserPassword: (id: string, newPassword: string) => axiosInstance.put(`/admin/users/${id}/password`, { newPassword }),
+  updateAdminUserStatus: (id: string, status: string) => axiosInstance.put(`/admin/users/${id}/status`, { status }),
+
+  // Admin rental management
+  getAdminRentals: (params?: any) => axiosInstance.get('/admin/rentals', { params }),
+  updateAdminRental: (id: string, data: any) => axiosInstance.put(`/admin/rentals/${id}`, data),
+  deleteAdminRental: (id: string) => axiosInstance.delete(`/admin/rentals/${id}`),
+
+  // Admin reports
+  getAdminReports: (params?: any) => axiosInstance.get('/admin/reports', { params }),
+  updateAdminReport: (id: string, data: any) => axiosInstance.put(`/admin/reports/${id}`, data),
+
+  // Admin analytics
+  getAdminAnalytics: () => axiosInstance.get('/admin/analytics'),
+
+  // Admin notify
+  sendAdminNotification: (data: any) => axiosInstance.post('/admin/notify', data),
+
+  // User notifications
+  getNotifications: () => axiosInstance.get('/notifications'),
+  markNotificationRead: (id: string) => axiosInstance.put(`/notifications/${id}/read`),
+  markAllNotificationsRead: () => axiosInstance.put('/notifications/read-all'),
+
+  // User reports
+  createReport: (data: any) => axiosInstance.post('/reports/create', data),
+
   // Generic method for any request
   post: (url: string, data: any) => axiosInstance.post(url, data),
   get: (url: string, config?: any) => axiosInstance.get(url, config),
